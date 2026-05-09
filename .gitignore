@@ -19,6 +19,8 @@ dist/
 # --- Docker ---
 .docker/
 Dockerfile copy
+docker-compose_copy.yml
+docker-compose.yml
 # --- Airflow (ถ้าคุณรัน Airflow ในเครื่อง) ---
 airflow.db
 airflow.cfg
