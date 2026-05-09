@@ -75,6 +75,6 @@ jobs:
             if [ -f "$DOCKER" ]; then echo "Docker Found"; else echo "Docker NOT Found at $DOCKER"; exit 1; fi
             echo "${{ secrets.GIT_HUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            docker compose pull
-            docker compose up -d
+            $DOCKER_COMPOSE pull
+            $DOCKER_COMPOSE up -d
 
