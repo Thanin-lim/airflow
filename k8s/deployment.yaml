@@ -21,7 +21,7 @@ spec:
       containers:
         - name: airflow-app
 
-          image: ghcr.io/YOUR_USERNAME/YOUR_REPO:latest
+          image: ghcr.io/placeholder/app:latest
 
           imagePullPolicy: Always
 
