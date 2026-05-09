@@ -1,16 +1,20 @@
-FROM --platform=linux/amd64 apache/airflow:2.7.1-python3.9
 
-USER root
 
-RUN apt-get update && apt-get install -y \
-    default-jdk \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# 1. ใช้ Python เป็นฐาน
+FROM python:3.10-slim
 
-ENV JAVA_HOME /usr/lib/jvm/default-java
+# 2. ตั้งโฟลเดอร์ทำงานใน Docker
+WORKDIR /app
 
-USER airflow
+# 3. ก๊อปปี้ไฟล์ requirements และติดตั้ง
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# ติดตั้ง requirements
-COPY --chown=airflow:root requirements.txt .
-RUN pip install --no-cache-dir "apache-airflow==2.7.1" -r requirements.txt
+# 4. ก๊อปปี้โค้ดทั้งหมดลงไป
+COPY . .
+
+# 5. เปิด Port 5000
+EXPOSE 5000
+
+# 6. สั่งรันโปรแกรม
+CMD ["python", "app.py"]

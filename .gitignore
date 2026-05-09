@@ -1,0 +1,26 @@
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+build/
+dist/
+
+# --- IDEs / Editors ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# --- Docker ---
+.docker/
+Dockerfile copy
+# --- Airflow (ถ้าคุณรัน Airflow ในเครื่อง) ---
+airflow.db
+airflow.cfg
+logs/
+unittests.cfg
