@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-config
+data:
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres-svc:5432/airflow"
+  AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow
+spec:
+  selector:
+    matchLabels:
+      app: airflow
+  template:
+    metadata:
+      labels:
+        app: airflow
+    spec:
+      securityContext:
+        runAsUser: 50000 
+        fsGroup: 0
+      containers:
+        - name: airflow
+          image: warvba22/airflow:0.1.4 
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+          command: ["/usr/bin/dumb-init", "--", "/entrypoint"]
+          args:
+            - bash
+            - -c
+            - |
+              airflow db migrate &&
+              airflow users create --username admin --firstname admin --lastname admin --role Admin --email admin@example.com --password admin || true &&
+              (airflow scheduler & airflow webserver)
+          volumeMounts:
+            - name: project-dags
+              mountPath: /opt/airflow/dags
+            - name: project-jobs
+              mountPath: /opt/airflow/jobs
+            - name: project-data
+              mountPath: /data/spark-apps/data
+      volumes:
+        - name: project-dags
+          hostPath:
+            path: /data/spark-apps/dags
+            type: Directory
+        - name: project-jobs
+          hostPath:
+            path: /data/spark-apps/jobs
+            type: Directory
+        - name: project-data
+          hostPath:
+            path: /data/spark-apps/data
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 8081
+      targetPort: 8080
+      nodePort: 30007 
+  selector:
+    app: airflow
