@@ -18,10 +18,13 @@ spec:
         app: airflow-app
 
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
       containers:
         - name: airflow-app
 
-          image: ghcr.io/placeholder/app:latest
+          image: ghcr.io/thanin-lim/airflow:latest
 
           imagePullPolicy: Always
 

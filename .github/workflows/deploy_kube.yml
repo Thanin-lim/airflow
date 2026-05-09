@@ -3,7 +3,7 @@ name: Build Push And Deploy Kubernetes
 on:
   push:
     branches:
-      - test/ci-cd
+      - "**"
 
 jobs:
   build-and-push:
