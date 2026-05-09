@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mc-mirror
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: mc-mirror
+
+  template:
+    metadata:
+      labels:
+        app: mc-mirror
+
+    spec:
+      containers:
+        - name: mc
+
+          image: minio/mc:latest
+
+          command:
+            - /bin/sh
+            - -c
+
+          args:
+            - |
+              mc alias set local http://minio:9000 minio minio123;
+              mc mb local/mybucket --ignore-existing;
+              mc mirror --watch local/mybucket/ /shared/files;
+
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /shared/files
+
+      volumes:
+        - name: shared-storage
+
+          hostPath:
+            path: /data/spark-apps/data/shared
+            type: DirectoryOrCreate
