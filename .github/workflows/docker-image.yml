@@ -71,10 +71,10 @@ jobs:
           script: |
             cd ~/Desktop/Airflow 
             DOCKER="/Applications/Docker.app/Contents/Resources/bin/docker"
-            DOCKER_COMPOSE="/Applications/Docker.app/Contents/Resources/bin/docker-compose"
-            if [ -f "$DOCKER" ]; then echo "Docker Found"; else echo "Docker NOT Found at $DOCKER"; exit 1; fi
+            export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+            which docker || true
+            docker --version
             echo "${{ secrets.GIT_HUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            $DOCKER_COMPOSE pull
-            $DOCKER_COMPOSE up -d
-
+            docker compose pull
+            docker compose up -d
